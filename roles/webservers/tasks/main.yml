@@ -2,8 +2,9 @@
 # tasks file for webservers
 - name: install httpd on the webserver
   ansible.builtin.yum:
-      name: "httpd"
-      state: present
+    enablerepo: "BaseOS,AppStream"
+    name: "httpd"
+    state: present
 
 
 - name: ensure httpd is started and enabled
@@ -12,21 +13,16 @@
      state: started 
      enabled: yes
 
-- name: install repositories
-  ansible.builtin.yum:
-    name:
-      - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-      - install dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
-    disable_gpg_check: yes
-    state: present
+
+
 
 - name: install PHP
   ansible.builtin.yum:
-    enablerepo: epel
+    enablerepo: "BaseOS,AppStream"
     name:
       - php 
       - php-mysqlnd
-      - php-opcache
+      - php-opache
       - php-gd 
       - php-curl
     state: present
