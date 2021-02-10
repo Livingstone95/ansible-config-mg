@@ -1,0 +1,81 @@
+ 
+- name: remove default html folder
+  ansible.builtin.file:
+    path: /var/www/html
+    state: absent
+
+
+- name: Clone the repository
+  ansible.builtin.git:
+   repo: https://github.com/Livingstone95/tooling.git
+   clone: yes
+   dest: /home/ansadmin/tooling
+    
+
+- name: copy the html from tooling
+  ansible.builtin.copy:
+    src: /home/ansadmin/tooling/html/
+    dest: /var/www/
+    owner: "ansadmin"
+    mode: '0755'
+    remote_src: yes
+  
+- name: to ensure httpd have access to /var/www/html
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: "ansadmin"
+    mode: '0755'
+
+- name: Replace functions.php file
+  ansible.builtin.template:
+    src: templates/functions.php.j2
+    dest: /var/www/html/functions.php
+  
+- name: create site available
+  ansible.builtin.file:
+    path: /etc/httpd/sites-available/ 
+    state: directory
+    follow: yes
+
+- name: create site enabled
+  ansible.builtin.file:
+    path: /etc/httpd/sites-enabled/ 
+    state: directory
+
+- name: create livingstone file in site enabled
+  ansible.builtin.file:
+    path: /etc/httpd/sites-enabled/livingstone
+    state: touch
+    owner: "ansadmin"
+    mode: '0755'
+
+#useful when the remote host is RHEL/Centos
+
+- name: allowed the directory to be server as http content
+  command: chcon -vR system_u:object_r:httpd_sys_content_t:s0 /var/www/html
+
+- name: Allow apache to modify /etc/httpd/sites-enabled/ansadmin 
+  community.general.sefcontext:
+    target: /etc/httpd/sites-available/livingstone
+    ignore_selinux_state: yes
+    setype: httpd_sys_content_t
+
+- name: set up apache virtual host
+  ansible.builtin.template:
+    src: "templates/httpd.conf.j2"
+    dest: "/etc/httpd/sites-available/livingstone"
+
+
+- name: de-activate default httpd site
+  ansible.builtin.file:
+    path: /etc/httpd/conf.d/welcome.conf 
+    state: absent
+
+
+- name: activate tooling site
+  ansible.builtin.file:
+    src: /etc/httpd/sites-available/livingstone
+    dest: /etc/httpd/sites-enabled/livingstone
+    force: yes
+    state: link

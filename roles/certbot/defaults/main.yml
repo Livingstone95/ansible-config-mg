@@ -22,5 +22,5 @@ certbot_certs:
 
 
 certbot_create_command: >-
- sudo certbot --nginx -d livingstone.cf -d www.livingstone.cf
+    certbot --nginx -d livingstone.cf -d www.livingstone.cf
 
