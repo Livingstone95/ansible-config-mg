@@ -11,7 +11,7 @@
   - name: install base packages
     ansible.builtin.yum:
       update_cache: yes
-      - name: 
+      name: 
          - git
 
   - name: create a tetst file
