@@ -1,0 +1,23 @@
+---
+# tasks file for certbot
+
+
+- name: install repositories
+  ansible.builtin.yum:
+    name: epel-release
+    disable_gpg_check: yes
+    state: present
+
+- name: install certbot
+  ansible.builtin.yum:
+    enablerepo: epel-release
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+
+- include_tasks: cert.yml
+  with_items: "{{ certbot_certs }}"
+
+- import_tasks: renew-cron.yml
+  when: certbot_auto_renew

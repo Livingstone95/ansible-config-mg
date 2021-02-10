@@ -1,0 +1,16 @@
+[bastion]
+3.126.245.240  ansible_connection=local
+
+[webservers]
+3.127.231.75     
+3.125.42.87      
+52.59.241.142    
+
+[loadbalancer]
+3.120.206.157   
+
+[database]
+18.193.106.150 
+
+[jenkins]
+3.64.56.6        

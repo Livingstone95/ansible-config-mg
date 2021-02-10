@@ -1,0 +1,104 @@
+---
+# tasks file for loadbalancer
+- name: install nginx on the webserver
+  ansible.builtin.yum:
+      name: nginx
+      state: present
+
+
+- name: ensure nginx is started and enabled
+  ansible.builtin.service:
+     name: nginx
+     state: started 
+     enabled: yes
+
+- name: install repositories
+  ansible.builtin.yum:
+    name:
+      - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      - install dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
+    disable_gpg_check: yes
+    state: present
+
+- name: install PHP
+  ansible.builtin.yum:
+    enablerepo: epel
+    name:
+      - php 
+      - php-mysqlnd
+      - php-opcache
+      - php-gd 
+      - php-curl
+    state: present
+
+- name: allow selinux to use httpd
+  command: setsebool -P httpd_execmem 1
+
+- name: ensure php-fpm is started and enabled
+  ansible.builtin.service:
+     name: php-fpm
+     state: reloaded
+     enabled: yes
+  notify: Restart httpd
+
+
+- name: create livingstone.conf
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d/livingstone.conf 
+    state: directory
+
+- name: copy to livingstone.conf
+  ansible.builtin.template:
+    src: "templates/livingstone.conf.j2"
+    dest: /etc/nginx/conf.d/livingstone.conf 
+ 
+
+- name: create site available
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available/ 
+    state: directory
+
+- name: create site enabled
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/ 
+    state: directory
+
+- name: create livingstone file in site enabled
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/livingstone
+    state: touch
+    owner: "ansadmin"
+    mode: '0755'
+
+- name: set up nginx virtual host
+  ansible.builtin.template:
+    src: "templates/livingstone.conf.j2"
+    dest: "/etc/httpd/sites-available/livingstone"
+  notify: Restart nginx
+
+- name: install firewalld
+  ansible.builtin.yum:
+     name: firewalld
+     state: latest
+
+- name: ensure httpd firewalld is enabled
+  ansible.builtin.service:
+     name: firewalld
+     state: started 
+     enabled: yes
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    zone: public
+    service: https
+    permanent: yes
+    state: enabled   
+
+
+- name: permit traffic in default zone for http service
+  ansible.posix.firewalld:
+    zone: public
+    service: http
+    permanent: yes
+    state: enabled   
+

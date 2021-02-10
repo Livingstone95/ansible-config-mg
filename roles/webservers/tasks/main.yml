@@ -1,0 +1,151 @@
+---
+# tasks file for webservers
+- name: install httpd on the webserver
+  ansible.builtin.yum:
+      name: "httpd"
+      state: present
+
+
+- name: ensure httpd is started and enabled
+  ansible.builtin.service:
+     name: httpd 
+     state: started 
+     enabled: yes
+
+- name: install repositories
+  ansible.builtin.yum:
+    name:
+      - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      - install dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
+    disable_gpg_check: yes
+    state: present
+
+- name: install PHP
+  ansible.builtin.yum:
+    enablerepo: epel
+    name:
+      - php 
+      - php-mysqlnd
+      - php-opcache
+      - php-gd 
+      - php-curl
+    state: present
+
+- name: allow selinux to use httpd
+  command: setsebool -P httpd_execmem 1
+
+- name: ensure php-fpm is started and enabled
+  ansible.builtin.service:
+     name: php-fpm
+     state: reloaded
+     enabled: yes
+  notify: Restart httpd
+
+- name: remove default html folder
+  ansible.builtin.file:
+    path: /var/www/html
+    state: absent
+
+
+- name: Clone the repository
+  ansible.builtin.git:
+   repo: https://github.com/Livingstone95/tooling.git
+   clone: yes
+   dest: /home/ansadmin/tooling
+    
+
+- name: copy the html from tooling
+  ansible.builtin.copy:
+    src: /home/ansadmin/tooling/html/
+    dest: /var/www/
+    owner: "ansadmin"
+    mode: '0755'
+    remote_src: yes
+  
+- name: to ensure httpd have access to /var/www/html
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: "ansadmin"
+    mode: '0755'
+
+- name: Replace functions.php file
+  ansible.builtin.template:
+    src: templates/functions.php.j2
+    dest: /var/www/html/functions.php
+  
+- name: create site available
+  ansible.builtin.file:
+    path: /etc/httpd/sites-available/ 
+    state: directory
+    follow: yes
+
+- name: create site enabled
+  ansible.builtin.file:
+    path: /etc/httpd/sites-enabled/ 
+    state: directory
+
+- name: create livingstone file in site enabled
+  ansible.builtin.file:
+    path: /etc/httpd/sites-enabled/livingstone
+    state: touch
+    owner: "ansadmin"
+    mode: '0755'
+
+#useful when the remote host is RHEL/Centos
+
+- name: allowed the directory to be server as http content
+  command: chcon -vR system_u:object_r:httpd_sys_content_t:s0 /var/www/html
+
+- name: Allow apache to modify /etc/httpd/sites-enabled/ansadmin 
+  community.general.sefcontext:
+    target: /etc/httpd/sites-available/livingstone
+    ignore_selinux_state: yes
+    setype: httpd_sys_content_t
+
+- name: set up apache virtual host
+  ansible.builtin.template:
+    src: "templates/httpd.conf.j2"
+    dest: "/etc/httpd/sites-available/livingstone"
+
+
+- name: de-activate default httpd site
+  ansible.builtin.file:
+    path: /etc/httpd/conf.d/welcome.conf 
+    state: absent
+
+
+
+- name: activate tooling site
+  ansible.builtin.file:
+    src: /etc/httpd/sites-available/livingstone
+    dest: /etc/httpd/sites-enabled/livingstone
+    force: yes
+    state: link
+   
+- name: install firewalld
+  ansible.builtin.yum:
+     name: firewalld
+     state: latest
+
+- name: ensure httpd firewalld is enabled
+  ansible.builtin.service:
+     name: firewalld
+     state: started 
+     enabled: yes
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    zone: public
+    service: https
+    permanent: yes
+    state: enabled   
+
+
+- name: permit traffic in default zone for http service
+  ansible.posix.firewalld:
+    zone: public
+    service: http
+    permanent: yes
+    state: enabled   
+

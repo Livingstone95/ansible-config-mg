@@ -1,0 +1,24 @@
+---
+
+- hosts: all
+  become: true
+- name: Include dynamic variables
+  import_playbook: ../static-assignments/common.yml
+   
+
+# - hosts: webservers
+# - name: Webserver assignment
+#   ansible.builtin.import_playbook: ../static-assignments/webservers.yml
+
+# - hosts: database
+# - name: database assignment
+#   ansible.builtin.import_playbook: ../static-assignments/database.yml
+  
+# - hosts: loadbalancer
+# - name: loadbalancer assignment
+#   ansible.builtin.import_playbook: ../static-assignments/loadbalancer.yml
+#   when: load_balancer_is_required
+
+# - hosts: loadbalancer
+# - name: certbot assignment
+#   ansible.builtin.import_playbook: ../static-assignments/certbot.yml

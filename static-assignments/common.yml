@@ -1,0 +1,27 @@
+---
+
+- name: install softwares
+  hosts:  all
+  become: true
+  
+  tasks:
+  - name: print the hostname
+    command: hostname
+
+  - name: install base packages
+    ansible.builtin.yum:
+      update_cache: yes
+      - name: 
+         - git
+
+  - name: create a tetst file
+    file:
+      path: /home/test 
+      state: touch
+
+
+  - name: update /etc/host to resolve IP address to hostaname
+    ansible.builtin.template:
+      src: /template/hosts.j2
+      dest: /etc/hosts
+  

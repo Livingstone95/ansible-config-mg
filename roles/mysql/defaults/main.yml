@@ -1,0 +1,11 @@
+---
+# defaults file for mysql- name: Restart httpd
+ 
+mysql_user_home: /home/ansadmin
+mysql_user_name: ansadmin
+mysql_user_password: ansible
+
+# The default root user installed by mysql - almost always root
+mysql_root_home: /root
+mysql_root_username: root
+mysql_root_password: root

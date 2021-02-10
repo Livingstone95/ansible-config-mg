@@ -1,0 +1,53 @@
+---
+# tasks file for mysql
+- name: install mysql 
+  ansible.builtin.yum:
+    enablerepo: "BaseOs, AppStream"
+    name: mysql-server
+    state: present
+
+- name: ensure mysqld is started and enabled
+  ansible.builtin.service:
+     name: mysqld
+     state: started 
+     enabled: yes
+
+- name: create /var/lib/mysql/mysql.sock
+  ansible.builtin.file:
+    path: /var/lib/mysql/mysql.sock
+    state: touch
+
+- name: create database
+  mysql_db:
+    name: tooling-db
+    collation: utf8_general_ci
+    encoding: utf8
+    replicate: 1
+    state: present
+
+- name: create user
+  community.mysql.mysql_user:
+    name: tooling
+    host: '0.0.0.0'
+    password: toooling
+    priv: '*.*:ALL,GRANT'
+    state: present
+
+
+- name: update /ect/my.cf for bind-address
+  ansible.builtin.template:
+    src: template/my.cnf.j2
+    dest: /etc/my.cnf
+  notify: Restart mysql
+
+- name: clone tooling repository
+  ansible.builtin.git:
+   repo: https://github.com/Livingstone95/tooling.git
+   clone: yes
+   dest: /home/ansadmin/tooling
+
+- name: import tooling-db.sql
+  mysql_db:
+    state: import
+    name: all
+    target: /home/ansadmin/tooling/tooling-db.sql

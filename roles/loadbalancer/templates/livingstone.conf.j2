@@ -1,0 +1,27 @@
+
+server {
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name livingstone.cf www.livingstone.cf;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+
+
+upstream backend  {
+  server  propitxweb1.com;
+  server  propitxweb2.com;
+  server  propitxweb3.com;
+}
+
+
+
+server {
+  location / {
+    proxy_pass  http://backend;
+  }
+}
