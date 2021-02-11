@@ -1,14 +1,14 @@
 ---
 # tasks file for mysql
+
 - name: install mysql 
-  ansible.builtin.yum:
-    enablerepo: "BaseOs, AppStream"
+  ansible.builtin.apt:
     name: mysql-server
     state: present
 
-- name: ensure mysqld is started and enabled
+- name: ensure mysql is started and enabled
   ansible.builtin.service:
-     name: mysqld
+     name: mysql
      state: started 
      enabled: yes
 
@@ -19,14 +19,14 @@
 
 - name: remove previous database if any
   community.mysql.mysql_db:
-    name: tooling-db
+    name: toolingdb
     collation: utf8_general_ci
     encoding: utf8
     state: absent
 
 - name: create database
   community.mysql.mysql_db:
-    name: tooling-db
+    name: toolingdb
     collation: utf8_general_ci
     encoding: utf8
     state: present
@@ -43,7 +43,7 @@
 - name: update /ect/my.cf for bind-address
   ansible.builtin.template:
     src: templates/my.cnf.j2
-    dest: /etc/my.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
   notify: Restart mysql
 
 - name: clone tooling repository

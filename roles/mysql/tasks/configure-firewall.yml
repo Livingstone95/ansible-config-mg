@@ -1,36 +1,12 @@
+- name: Allow everything and enable UFW
+  community.general.ufw:
+    state: enabled
+    policy: allow
 
 
-- name: install firewalld
-  ansible.builtin.yum:
-     name: firewalld
-     state: latest
 
-- name: ensure httpd firewalld is enabled
-  ansible.builtin.service:
-     name: firewalld
-     state: started 
-     enabled: yes
-
-- name: permit traffic in default zone for https service
-  ansible.posix.firewalld:
-    zone: public
-    service: https
-    permanent: yes
-    state: enabled   
-
-
-- name: permit traffic in default zone for http service
-  ansible.posix.firewalld:
-    zone: public
-    service: http
-    permanent: yes
-    state: enabled   
-
-
-- name: permit traffic in default zone for mysql service
-  ansible.posix.firewalld:
-    zone: public
-    port: 3306/tcp
-    permanent: yes
-    state: enabled  
-  notify: restart firewall
+- name: Allow port range 60000-61000
+  community.general.ufw:
+    rule: allow
+    port: 3306
+    proto: tcp
