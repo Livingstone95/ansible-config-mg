@@ -1,6 +1,6 @@
 
 
-    - name: install firewalld
+- name: install firewalld
   ansible.builtin.yum:
      name: firewalld
      state: latest
@@ -27,10 +27,10 @@
     state: enabled   
 
 
-- name: permit traffic in default zone for http service
+- name: permit traffic in default zone for mysql service
   ansible.posix.firewalld:
     zone: public
-    service: 3306/tcp
+    port: 3306/tcp
     permanent: yes
     state: enabled  
   notify: restart firewall

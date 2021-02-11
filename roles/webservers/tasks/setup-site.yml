@@ -14,7 +14,7 @@
 
 - name: copy the html from tooling
   ansible.builtin.copy:
-    src: /home/ansadmin/tooling/html/
+    src: /home/ansadmin/tooling/html
     dest: /var/www/
     owner: "ansadmin"
     mode: '0755'
@@ -50,11 +50,6 @@
     owner: "ansadmin"
     mode: '0755'
 
-#useful when the remote host is RHEL/Centos
-
-- name: allowed the directory to be server as http content
-  command: chcon -vR system_u:object_r:httpd_sys_content_t:s0 /var/www/html
-
 - name: Allow apache to modify /etc/httpd/sites-enabled/ansadmin 
   community.general.sefcontext:
     target: /etc/httpd/sites-available/livingstone
@@ -79,3 +74,15 @@
     dest: /etc/httpd/sites-enabled/livingstone
     force: yes
     state: link
+
+#useful when the remote host is RHEL/Centos
+- name: allowed the directory to be server as http content
+  command: chcon -vR system_u:object_r:httpd_sys_content_t:s0 /var/www/html
+
+- name: allowed selinux to connect to network
+  command: setsebool -P httpd_can_network_connect 1
+
+
+- name: allowed connection to database
+  command: setsebool -P httpd_can_network_connect_db 1
+

@@ -6,23 +6,17 @@
     name: "httpd"
     state: present
 
-
 - name: ensure httpd is started and enabled
   ansible.builtin.service:
      name: httpd 
      state: started 
      enabled: yes
 
-
-
-
 - name: install PHP
   ansible.builtin.yum:
-    enablerepo: "BaseOS,AppStream"
     name:
       - php 
       - php-mysqlnd
-      - php-opache
       - php-gd 
       - php-curl
     state: present

@@ -1,4 +1,24 @@
 
+
+upstream backend  {
+  server  propitxweb1.com;
+  server  propitxweb2.com;
+  server  propitxweb3.com;
+}
+
+
+server {
+  location / {
+     proxy_redirect      off;
+	   proxy_set_header    X-Real-IP $remote_addr;
+	   proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+	   proxy_set_header    Host $http_host;
+    proxy_pass  http://backend;
+  }
+}
+
+
+
 server {
 
         root /var/www/html;
@@ -11,16 +31,3 @@ server {
         }
 }
 
-
-upstream backend  {
-  server  propitxweb1.com;
-  server  propitxweb2.com;
-  server  propitxweb3.com;
-}
-
-
-server {
-  location / {
-    proxy_pass  http://backend;
-  }
-}

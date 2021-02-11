@@ -12,6 +12,8 @@ certbot_auto_renew_options: "--quiet --no-self-upgrade"
 certbot_create_if_missing: false
 certbot_create_method: nginx
 certbot_admin_email: segun@darey.io
+
+
 certbot_certs: 
 - email: segun@darey.io
   domains:
@@ -22,5 +24,5 @@ certbot_certs:
 
 
 certbot_create_command: >-
-    certbot --nginx -d livingstone.cf -d www.livingstone.cf
+  certbot  --nginx --noninteractive --agree-tos --email segun@darey.io -d livingstone.cf
 

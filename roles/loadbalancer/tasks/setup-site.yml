@@ -1,7 +1,7 @@
 - name: create livingstone.conf
   ansible.builtin.file:
     path: /etc/nginx/conf.d/livingstone.conf 
-    state: directory
+    state: touch
 
 - name: copy to livingstone.conf
   ansible.builtin.template:
@@ -19,7 +19,7 @@
     path: /etc/nginx/sites-enabled/ 
     state: directory
 
-- name: create livingstone file in site availablr
+- name: create livingstone file in site available
   ansible.builtin.file:
     path: /etc/nginx/sites-available/livingstone
     state: touch
@@ -29,17 +29,32 @@
 - name: set up nginx virtual host
   ansible.builtin.template:
     src: "templates/livingstone.conf.j2"
-    dest: "/etc/httpd/sites-available/livingstone"
+    dest: "/etc/nginx/sites-available/livingstone"
   notify: Restart nginx
 
 - name: activate site
   ansible.builtin.file:
-    src: /etc/httpd/sites-available/livingstone
-    dest: /etc/httpd/sites-enabled/livingstone
+    src: /etc/nginx/sites-available/livingstone
+    dest: /etc/nginx/sites-enabled/livingstone
     force: yes
     state: link
 
-# setsebool -P httpd_can_network_connect 1
+- name: remove nginx default page
+  ansible.builtin.file:
+    path:  /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: remove nginx default page
+  ansible.builtin.file:
+    path:  /etc/nginx/sites-available/default
+    state: absent
+
+- name: set selinux universal policy
+  command: setsebool -P httpd_can_network_connect 1
+
+
+
+
 # sudo semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?"
 # sudo restorecon -R -v /var/www/html
 # sudo semanage fcontext -a -t httpd_log_t "/var/log/httpd/logs(/.*)?"

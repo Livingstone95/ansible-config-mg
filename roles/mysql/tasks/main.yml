@@ -17,26 +17,32 @@
     path: /var/lib/mysql/mysql.sock
     state: touch
 
-- name: create database
-  mysql_db:
+- name: remove previous database if any
+  community.mysql.mysql_db:
     name: tooling-db
     collation: utf8_general_ci
     encoding: utf8
-    replicate: 1
+    state: absent
+
+- name: create database
+  community.mysql.mysql_db:
+    name: tooling-db
+    collation: utf8_general_ci
+    encoding: utf8
     state: present
 
 - name: create user
   community.mysql.mysql_user:
     name: tooling
     host: '0.0.0.0'
-    password: toooling
+    password: tooling
     priv: '*.*:ALL,GRANT'
     state: present
 
 
 - name: update /ect/my.cf for bind-address
   ansible.builtin.template:
-    src: template/my.cnf.j2
+    src: templates/my.cnf.j2
     dest: /etc/my.cnf
   notify: Restart mysql
 
@@ -49,7 +55,8 @@
 - name: import tooling-db.sql
   mysql_db:
     state: import
-    name: all
+    name: tooling-db
     target: /home/ansadmin/tooling/tooling-db.sql
- 
+
+- import_tasks: configure-firewall.yml
 
