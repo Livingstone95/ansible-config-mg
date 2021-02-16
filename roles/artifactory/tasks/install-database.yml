@@ -1,5 +1,3 @@
----
-# tasks file for mysql
 
 - name: install mysql 
   ansible.builtin.apt:
@@ -19,16 +17,16 @@
 
 - name: create database
   community.mysql.mysql_db:
-    name: toolingdb
+    name: artifactorydb
     collation: utf8_general_ci
     encoding: utf8
     state: present
 
 - name: create user
   community.mysql.mysql_user:
-    name: tooling
+    name: artifactory
     host: '0.0.0.0'
-    password: tooling
+    password: artifactory
     priv: '*.*:ALL,GRANT'
     state: present
 
@@ -38,18 +36,3 @@
     src: templates/my.cnf.j2
     dest: /etc/mysql/mysql.conf.d/mysqld.cnf
   notify: Restart mysql
-
-- name: clone tooling repository
-  ansible.builtin.git:
-   repo: https://github.com/Livingstone95/tooling.git
-   clone: yes
-   dest: /home/ansadmin/tooling
-
-- name: import tooling-db.sql
-  mysql_db:
-    state: import
-    name: tooling-db
-    target: /home/ansadmin/tooling/tooling-db.sql
-
-- import_tasks: configure-firewall.yml
-
