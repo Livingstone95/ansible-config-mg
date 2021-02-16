@@ -5,7 +5,7 @@ The repository contains ansible script for automating the installation of Mysql,
 The script also deploys a PHP web Application.
 
 Linux Distrubution used;
-  * database: Ubuntu
+  * Database: Ubuntu
   * Bastion Host: Amazon Linux
   * Ansible managed nodes: RHEL 8
 
