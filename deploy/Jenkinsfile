@@ -20,5 +20,21 @@
       }
     }
 
+    stage('Package') {
+      steps {
+        script {
+          sh 'echo "packaging Stage"'
+        }
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        script {
+          sh 'echo "Deploy to production"'
+        }
+      }
+    }
+
     }
 }
