@@ -21,22 +21,28 @@ pipeline{
           }
         }
 
-      stage('Checkout SCM')
+      stage('Checkout SCM') {
          steps{
             git branch: 'main', url: 'https://github.com/Livingstone95/ansible-config-mg.git'
          }
-
+       }
       stage('Prepare Ansible For Execution') {
         steps {
           sh 'echo ${WORKSPACE}'
           sh 'sed -i \'s/roles_path = \\/var\\/lib\\/jenkins\\/workspace/roles_path = \\/var\\/lib\\/jenkins\\/workspace\\/ansible-project_release-0.0.1\\/roles /g\' deploy/ansible.cfg'
+        }
       }
-    stage('Run Ansible') {
+
+      stage('Run Ansible') {
         steps {
-            ansiblePlaybook become: true, colorized: true, credentialsId: 'ansible', disableHostKeyChecking: true, installation: 'Ansible', inventory: "inventory/${inventory_file}", playbook: 'playbooks/site.yml', tags: '${ansible_tag}'
-   } 
-      stage('Clean Workspace after build')
+          ansiblePlaybook become: true, colorized: true, credentialsId: '7bf570d0-f3fd-490e-a0aa-c4929a5caea2', disableHostKeyChecking: true, inventory: 'inventory/dev', playbook: 'playbooks/site.ym'  
+           }
+      }
+
+      stage('Clean Workspace after build'){
         steps{
           cleanWs()
         }
- }
+      }
+   }
+}   

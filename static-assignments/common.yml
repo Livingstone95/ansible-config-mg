@@ -13,15 +13,16 @@
       update_cache: yes
       name: 
          - git
+         - wget
 
   - name: create a tetst file
     file:
       path: /home/test 
       state: touch
 
-  - name: update /etc/host to resolve IP address to hostaname
-    ansible.builtin.template:
-      src: templates/hosts.j2
-      dest: /etc/hosts
+  # - name: update /etc/host to resolve IP address to hostaname
+  #   ansible.builtin.template:
+  #     src: templates/hosts.j2
+  #     dest: /etc/hosts
   
     
