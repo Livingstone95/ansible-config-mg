@@ -27,13 +27,16 @@ pipeline{
          }
 
       stage('Prepare Ansible For Execution') {
-      steps {
+        steps {
           sh 'echo ${WORKSPACE}'
           sh 'sed -i \'s/roles_path = \\/var\\/lib\\/jenkins\\/workspace/roles_path = \\/var\\/lib\\/jenkins\\/workspace\\/ansible-project_release-0.0.1\\/roles /g\' deploy/ansible.cfg'
       }
     stage('Run Ansible') {
-      steps {
+        steps {
             ansiblePlaybook become: true, colorized: true, credentialsId: 'ansible', disableHostKeyChecking: true, installation: 'Ansible', inventory: "inventory/${inventory_file}", playbook: 'playbooks/site.yml', tags: '${ansible_tag}'
    } 
-
+      stage('Clean Workspace after build')
+        steps{
+          cleanWs()
+        }
  }
