@@ -12,7 +12,7 @@
 
 [db:vars]
 ansible_user=ec2-user
-ansible_python_interpreter=/usr/bin/python
+ansible_python_interpreter=/usr/bin/python3
 
 
 [db]

@@ -1,0 +1,15 @@
+[tooling]
+18.197.68.89
+
+[todo]
+18.157.165.218
+
+[nginx]
+18.159.134.57
+
+[db:vars]
+ansible_user=ec2-user
+ansible_python_interpreter=/usr/bin/python
+
+[db]
+18.159.129.114

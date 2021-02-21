@@ -1,48 +1,39 @@
- pipeline {
-    agent any
+pipeline{
+   agent any
 
+   environment {
+      ANSIBLE_CONFIG="${WORKSPACE}/deploy/ansible.cfg"
+   }
 
-  stages {
-    stage('Build') {
-      steps {
-        script {
-          sh 'echo "Building Stage"'
+     parameters {
+      string(name: 'inventory_file', defaultValue: 'dev',  description: 'This is the inventory file for the environment to deploy configuration')
+      string(name: 'ansible_tag', defaultValue: '',  description: 'This is the tag to decide what role or playbook to run')
+    }
+     
+
+   stages{
+
+      stage("Initial cleanup") {
+          steps {
+            dir("${WORKSPACE}") {
+              deleteDir()
+            }
+          }
         }
-      }
-    }
 
+      stage('Checkout SCM')
+         steps{
+            git branch: 'main', url: 'https://github.com/Livingstone95/ansible-config-mg.git'
+         }
 
-    stage('Test') {
+      stage('Prepare Ansible For Execution') {
       steps {
-        script {
-          sh 'echo "Testing Stage"'
-        }
+          sh 'echo ${WORKSPACE}'
+          sh 'sed -i \'s/roles_path = \\/var\\/lib\\/jenkins\\/workspace/roles_path = \\/var\\/lib\\/jenkins\\/workspace\\/ansible-project_release-0.0.1\\/roles /g\' deploy/ansible.cfg'
       }
-    }
-    
-    stage('Test2') {
+    stage('Run Ansible') {
       steps {
-        script {
-          sh 'echo "Testing Stage Number Two"'
-        }
-      }
-    }
+            ansiblePlaybook become: true, colorized: true, credentialsId: 'ansible', disableHostKeyChecking: true, installation: 'Ansible', inventory: "inventory/${inventory_file}", playbook: 'playbooks/site.yml', tags: '${ansible_tag}'
+   } 
 
-    stage('Package') {
-      steps {
-        script {
-          sh 'echo "packaging Stage"'
-        }
-      }
-    }
-
-    stage('Deploy') {
-      steps {
-        script {
-          sh 'echo "Deploy to production"'
-        }
-      }
-    }
-
-    }
-}
+ }
