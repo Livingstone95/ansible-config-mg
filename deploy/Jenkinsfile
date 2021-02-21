@@ -19,6 +19,14 @@
         }
       }
     }
+    
+    stage('Test2') {
+      steps {
+        script {
+          sh 'echo "Testing Stage Number Two"'
+        }
+      }
+    }
 
     stage('Package') {
       steps {
