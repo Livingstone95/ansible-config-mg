@@ -35,8 +35,7 @@ pipeline{
 
       stage('Run Ansible') {
         steps {
-          ansiblePlaybook becomeUser: 'ansadmin', colorized: true, credentialsId: 'jenkins', disableHostKeyChecking: true, installation: 'ansible 2.10.6', inventory: 'inventory/dev', playbook: 'playbooks/site.ym'
-           }
+            ansiblePlaybook becomeUser: 'ansadmin', colorized: true, credentialsId: 'JenkinsID1', disableHostKeyChecking: true, installation: 'ansible 2.10.6', inventory: 'inventory/dev', playbook: 'playbooks/site.yml'           }
       }
 
       stage('Clean Workspace after build'){
