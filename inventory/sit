@@ -1,15 +1,14 @@
 [tooling]
-18.197.68.89
+172.31.44.252
 
 [todo]
-18.157.165.218
+172.31.4.144
 
 [nginx]
-18.159.134.57
+172.31.4.197
 
-[db:vars]
-ansible_user=ec2-user
-ansible_python_interpreter=/usr/bin/python
+[database]
+172.31.43.57
 
-[db]
-18.159.129.114
+[artifactory]
+172.31.47.215
