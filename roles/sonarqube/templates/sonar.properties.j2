@@ -13,8 +13,8 @@
 # User credentials.
 # Permissions to create tables, indices and triggers must be granted to JDBC user.
 # The schema must be created first.
-#sonar.jdbc.username=
-#sonar.jdbc.password=
+sonar.jdbc.username=sonarqube
+sonar.jdbc.password=sonarqube
 
 #----- Embedded Database (default)
 # H2 embedded database server listening port, defaults to 9092
@@ -103,12 +103,12 @@ sonar.web.javaAdditionalOpts=-server
 # Binding IP address. For servers with more than one IP address, this property specifies which
 # address will be used for listening on the specified ports.
 # By default, ports will be used on all IP addresses associated with the server.
-snar.web.host=18.196.3.105
+snar.web.host=0.0.0.0
 
 # Web context. When set, it must start with forward slash (for example /sonarqube).
 # The default value is root context (empty value).
 
-#sonar.web.context=
+sonar.web.context= /sonar
 # TCP port for incoming HTTP connections. Default value is 9000.
 sonar.web.port=9000
 

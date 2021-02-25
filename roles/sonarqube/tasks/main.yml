@@ -1,5 +1,10 @@
 ---
 # tasks file for sonarqube
+- name: install java 11
+  ansible.builtin.yum:
+    name: java-11-openjdk-devel
+    state: present
+
 - import_tasks: postgresql.yml
 
 - name: create password for user postgres

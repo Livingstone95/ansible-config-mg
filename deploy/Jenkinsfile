@@ -23,7 +23,7 @@ pipeline{
 
       stage('Checkout SCM') {
          steps{
-            git branch: 'main', url: 'https://github.com/Livingstone95/ansible-config-mg.git'
+            git branch: 'feature/project-14', url: 'https://github.com/Livingstone95/ansible-config-mg.git'
          }
        }
       stage('Prepare Ansible For Execution') {
