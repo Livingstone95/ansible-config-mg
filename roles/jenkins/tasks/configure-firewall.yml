@@ -1,3 +1,4 @@
+
 - name: install firewalld
   ansible.builtin.yum:
      name: firewalld
@@ -30,4 +31,3 @@
     permanent: yes
     state: enabled   
   notify: Restart firewalld
-

@@ -23,7 +23,7 @@ pipeline{
 
       stage('Checkout SCM') {
          steps{
-            git branch: 'main', url: 'https://github.com/Livingstone95/ansible-config-mg.git'
+            git branch: 'feature/project-14', url: 'https://github.com/Livingstone95/ansible-config-mg.git'
          }
        }
       stage('Prepare Ansible For Execution') {
@@ -35,7 +35,8 @@ pipeline{
 
       stage('Run Ansible') {
         steps {
-            ansiblePlaybook becomeUser: 'root', colorized: true, credentialsId: 'JenkinsID1', disableHostKeyChecking: true, installation: 'ansible 2.10.6', inventory: 'inventory/dev', playbook: 'playbooks/site.yml'           }
+            ansiblePlaybook becomeUser: 'ansadmin', colorized: true, credentialsId: 'JenkinsID1', disableHostKeyChecking: true, installation: 'ansible 2.10.6', inventory: 'inventory/dev', playbook: 'playbooks/site.yml'     
+                  }
       }
 
       stage('Clean Workspace after build'){

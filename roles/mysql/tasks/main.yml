@@ -2,13 +2,13 @@
 # tasks file for mysql
 
 - name: install mysql 
-  ansible.builtin.apt:
+  ansible.builtin.yum:
     name: mysql-server
     state: present
 
 - name: ensure mysql is started and enabled
   ansible.builtin.service:
-     name: mysql
+     name: mysqld
      state: started 
      enabled: yes
 
@@ -36,20 +36,9 @@
 - name: update /ect/my.cf for bind-address
   ansible.builtin.template:
     src: templates/my.cnf.j2
-    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    dest: /etc/my.cnf
   notify: Restart mysql
 
-- name: clone tooling repository
-  ansible.builtin.git:
-   repo: https://github.com/Livingstone95/tooling.git
-   clone: yes
-   dest: /home/ansadmin/tooling
-
-- name: import tooling-db.sql
-  mysql_db:
-    state: import
-    name: tooling-db
-    target: /home/ansadmin/tooling/tooling-db.sql
 
 - import_tasks: configure-firewall.yml
 
