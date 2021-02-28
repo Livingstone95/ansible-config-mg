@@ -33,11 +33,11 @@
     state: present
 
 
-- name: update /ect/my.cf for bind-address
-  ansible.builtin.template:
-    src: templates/my.cnf.j2
-    dest: /etc/my.cnf
-  notify: Restart mysql
+# - name: update /ect/my.cf for bind-address
+#   ansible.builtin.template:
+#     src: templates/my.cnf.j2
+#     dest: /etc/my.cnf
+#   notify: Restart mysql
 
 
 - import_tasks: configure-firewall.yml
