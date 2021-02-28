@@ -35,7 +35,7 @@ pipeline{
 
       stage('Run Ansible') {
         steps {
-            ansiblePlaybook becomeUser: 'ansadmin', colorized: true, credentialsId: 'JenkinsID1', disableHostKeyChecking: true, installation: 'ansible 2.10.6', inventory: 'inventory/dev', playbook: 'playbooks/site.yml'     
+              ansiblePlaybook colorized: true, credentialsId: 'ansadmin2', disableHostKeyChecking: true, installation: 'Ansible', inventory: 'inventory/dev', playbook: 'playbooks/site.yml'   
                   }
       }
 
