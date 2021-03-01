@@ -2,7 +2,7 @@ pipeline{
    agent any
 
    environment {
-      ANSIBLE_CONFIG="${WORKSPACE}/deploy/ansible.cfg"
+      ANSIBLE_CONFIG="/home/ansadmin/workspace/ansible-config-mg/deploy/ansible.cfg"
    }
 
      parameters {
@@ -29,7 +29,7 @@ pipeline{
       stage('Prepare Ansible For Execution') {
         steps {
           sh 'echo ${WORKSPACE}'
-          sh 'sed -i \'s/roles_path = \\/var\\/lib\\/jenkins\\/workspace/roles_path = \\/var\\/lib\\/jenkins\\/workspace\\/ansible-project_release-0.0.1\\/roles /g\' deploy/ansible.cfg'
+          sh 'cd  /home/ansadmin/workspace/ansible-config-mg/'
         }
       }
 
